@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import Sketch from "react-p5";
 import Peddle from "../Components/Peddle/Peddle";
 import Ball from "../Components/Ball/Ball";
@@ -9,12 +9,13 @@ export default function Pong() {
   let yRight = 200;
   // let vyRight = 1;
   let BallPosX = 50;
-  let BallPosY = 250;
+  let BallPosY = 275;
   let BallMovementY = 0;
   let BallMovementX = 0;
   let scoreLeft = 0;
   let serve = false;
   let scoreRight = 0;
+  let winner = "None";
 
   const keyPressed = (e) => {
     if (e.key === "ArrowUp") {
@@ -99,11 +100,26 @@ export default function Pong() {
       }
     }
   };
+  const checkScore = () => {
+    if (scoreLeft === 5 && winner === "None") {
+      winner = "Player 1";
+      alert(`Winner: ${winner}`);
+      scoreLeft = 0;
+      scoreRight = 0;
+      winner = "None";
+    } else if (scoreRight === 5 && winner === "None") {
+      winner = "Player 2";
+      alert(`Winner: ${winner}`);
+      scoreLeft = 0;
+      scoreRight = 0;
+      winner = "None";
+    }
+  };
   const ballRePosition = () => {
     if (BallPosX > 760) {
       serve = false;
       BallPosX = 50;
-      BallPosY = 250;
+      BallPosY = 275;
       BallMovementX = 0;
       BallMovementY = 0;
       yLeft = 200;
@@ -112,7 +128,7 @@ export default function Pong() {
     } else if (BallPosX <= 0) {
       serve = false;
       BallPosX = 750;
-      BallPosY = 250;
+      BallPosY = 275;
       BallMovementX = 0;
       BallMovementY = 0;
       yLeft = 200;
@@ -120,7 +136,6 @@ export default function Pong() {
       scoreRight++;
     }
   };
-
   const draw = (p5) => {
     const LeftPeddle = new Peddle(20, yLeft);
     const RightPeddle = new Peddle(760, yRight);
@@ -139,9 +154,15 @@ export default function Pong() {
     //score
     p5.textFont("Visitor", 36);
     p5.fill(255, 255, 255);
-    p5.textSize(70);
+    p5.textSize(40);
     p5.text(scoreRight, 700, 50);
     p5.text(scoreLeft, 50, 50);
+
+    //check winner
+    checkScore();
+
+    //winner
   };
+
   return <Sketch keyPressed={keyPressed} setup={setup} draw={draw} />;
 }
