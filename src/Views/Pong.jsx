@@ -112,7 +112,7 @@ export default function Pong() {
       alert(`Winner: ${winner}`);
       scoreLeft = 0;
       scoreRight = 0;
-      winner = "None";
+      winner = "1";
     }
   };
   const ballRePosition = () => {
