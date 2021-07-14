@@ -1,13 +1,13 @@
-import React from "react";
-import Sketch from "react-p5";
-import Peddle from "../Components/Peddle/Peddle";
-import Ball from "../Components/Ball/Ball";
-import { setup } from "../Utils/Setup";
+import React from 'react';
+import Sketch from 'react-p5';
+import Peddle from '../Components/Peddle/Peddle';
+import Ball from '../Components/Ball/Ball';
+import { setup } from '../Utils/Setup';
 
-export default function Pong() {
+export default function Pong({ onShowPong, isVsAi, difficulty }) {
   let yLeft = 200;
   let yRight = 200;
-  // let vyRight = 1;
+  let vyRight = 1;
   let BallPosX = 50;
   let BallPosY = 275;
   let BallMovementY = 0;
@@ -15,34 +15,38 @@ export default function Pong() {
   let scoreLeft = 0;
   let serve = false;
   let scoreRight = 0;
-  let winner = "None";
+  let winner = 'None';
 
   const keyPressed = (e) => {
-    if (e.key === "ArrowUp") {
+    console.log(e.key);
+    if (e.key === 'Escape') {
+      onShowPong(false);
+    }
+    if (e.key === 'ArrowUp') {
       if (yRight === 0) {
         yRight -= 0;
       } else {
         yRight -= 50;
       }
-    } else if (e.key === "ArrowDown") {
+    } else if (e.key === 'ArrowDown') {
       if (yRight >= 350) {
         yRight += 0;
       } else {
         yRight += 50;
       }
-    } else if (e.key === "w") {
+    } else if (e.key === 'w') {
       if (yLeft === 0) {
         yLeft -= 0;
       } else {
         yLeft -= 50;
       }
-    } else if (e.key === "s") {
+    } else if (e.key === 's') {
       if (yLeft >= 350) {
         yLeft -= 0;
       } else {
         yLeft += 50;
       }
-    } else if (e.key === "Enter") {
+    } else if (e.key === 'Enter') {
       serve = true;
       // if (BallPosX === 760) {
       //   BallMovementX = -1;
@@ -57,22 +61,22 @@ export default function Pong() {
     }
   };
 
-  // const cpuMove = () => {
-  //   if (yRight <= 0) {
-  //     vyRight = 1;
-  //   } else if (yRight >= 350) {
-  //     vyRight = -1;
-  //   }
-  //   yRight += vyRight * 10;
-  // };
+  const cpuMove = () => {
+    if (yRight <= 0) {
+      vyRight = 1;
+    } else if (yRight >= 350) {
+      vyRight = -1;
+    }
+    yRight += vyRight * 10;
+  };
 
   const ballMove = () => {
     if (BallPosY <= 0) {
-      BallMovementY = 1;
+      BallMovementY = difficulty;
     } else if (BallPosY >= 500) {
-      BallMovementY = -1;
+      BallMovementY = -difficulty;
     } else if (BallPosX <= 0) {
-      BallMovementX = 1;
+      BallMovementX = difficulty;
     }
     // else if (BallPosX >= 760) {
     //   BallMovementX = -1;
@@ -84,16 +88,16 @@ export default function Pong() {
   const collision = () => {
     if (serve === true) {
       if (BallPosX >= 750 && BallPosY <= yRight + 150 && BallPosY >= yRight - 150) {
-        BallMovementX = -1;
+        BallMovementX = -difficulty;
         if (BallMovementY === 0) {
-          BallMovementY = 1;
+          BallMovementY = difficulty;
         } else {
           BallMovementY = BallMovementY;
         }
       } else if (BallPosX <= 50 && BallPosY <= yLeft + 150 && BallPosY >= yLeft - 150) {
-        BallMovementX = 1;
+        BallMovementX = difficulty;
         if (BallMovementY === 0) {
-          BallMovementY = 1;
+          BallMovementY = difficulty;
         } else {
           BallMovementY = BallMovementY;
         }
@@ -101,18 +105,18 @@ export default function Pong() {
     }
   };
   const checkScore = () => {
-    if (scoreLeft === 5 && winner === "None") {
-      winner = "Player 1";
+    if (scoreLeft === 5 && winner === 'None') {
+      winner = 'Player 1';
       alert(`Winner: ${winner}`);
       scoreLeft = 0;
       scoreRight = 0;
-      winner = "None";
-    } else if (scoreRight === 5 && winner === "None") {
-      winner = "Player 2";
+      winner = 'None';
+    } else if (scoreRight === 5 && winner === 'None') {
+      winner = 'Player 2';
       alert(`Winner: ${winner}`);
       scoreLeft = 0;
       scoreRight = 0;
-      winner = "None";
+      winner = 'None';
     }
   };
   const ballRePosition = () => {
@@ -148,11 +152,14 @@ export default function Pong() {
 
     collision();
     ballMove();
-    // cpuMove();
+    if (isVsAi) {
+      cpuMove();
+    }
+
     ballRePosition();
 
     //score
-    p5.textFont("Visitor", 36);
+    p5.textFont('Visitor', 36);
     p5.fill(255, 255, 255);
     p5.textSize(40);
     p5.text(scoreRight, 700, 50);
